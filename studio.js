@@ -1,0 +1,6 @@
+import {makePage} from './template.mjs';
+const $=id=>document.getElementById(id);
+function values(){return {business:$('business').value,headline:$('headline').value,description:$('description').value,contact:$('contact').value,world:document.querySelector('input[name="world"]:checked').value};}
+function preview(){const v=values();v.contact='';$('preview').srcdoc=makePage(v);$('message').textContent='';}
+$('controls').addEventListener('input',preview);$('controls').onsubmit=e=>e.preventDefault();
+$('export').onclick=()=>{try{if(!$('business').value.trim()||!$('headline').value.trim())throw Error('Add your business name and headline first.');if(!$('contact').value.trim())throw Error('Add your contact email so visitors can reach your business.');if(!$('contact').checkValidity())throw Error('Enter a valid contact email.');const text=makePage(values()),url=URL.createObjectURL(new Blob([text],{type:'text/html;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='my-business-site.html';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);$('message').textContent='HTML downloaded. Your details stayed in this browser; no order or payment was created.';}catch(e){$('message').textContent=e.message;}};preview();
